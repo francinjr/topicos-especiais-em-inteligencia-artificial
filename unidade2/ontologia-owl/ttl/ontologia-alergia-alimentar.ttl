@@ -1,0 +1,233 @@
+@prefix : <http://www.semanticweb.org/ontologia-alergias#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/ontologia-alergias#> .
+
+<http://www.semanticweb.org/ontologia-alergias> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/ontologia-alergias#eAlergicoA
+:eAlergicoA rdf:type owl:ObjectProperty ;
+            rdfs:domain :Pessoa ;
+            rdfs:range :Alimento ;
+            owl:propertyChainAxiom ( :eReacaoPara
+                                     :eSequenciaDe
+                                   ) .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#eReacaoPara
+:eReacaoPara rdf:type owl:ObjectProperty ;
+             owl:inverseOf :geraReacaoEmPessoaComProblema .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#eSequenciaDe
+:eSequenciaDe rdf:type owl:ObjectProperty ;
+              owl:inverseOf :possuiSequencia .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#geraReacaoEmPessoaComProblema
+:geraReacaoEmPessoaComProblema rdf:type owl:ObjectProperty ;
+                               rdfs:domain :SequenciaAminoacidos ;
+                               rdfs:range :PessoaComProblema .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#indica
+:indica rdf:type owl:ObjectProperty ;
+        rdfs:domain :Diagnostico ;
+        rdfs:range :ProblemaEmQuebrarSubstancias .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#possuiSequencia
+:possuiSequencia rdf:type owl:ObjectProperty ;
+                 rdfs:domain :Alimento ;
+                 rdfs:range :SequenciaAminoacidos .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#temDiagnostico
+:temDiagnostico rdf:type owl:ObjectProperty ;
+                rdfs:domain :Pessoa ;
+                rdfs:range :Diagnostico .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/ontologia-alergias#Alergia
+:Alergia rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#Alimento
+:Alimento rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#AlimentoAlergenico
+:AlimentoAlergenico rdf:type owl:Class ;
+                    owl:equivalentClass :AlimentoAlergenicoParaPessoa ;
+                    owl:disjointWith :AlimentoNaoAlergenico .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#AlimentoAlergenicoParaPessoa
+:AlimentoAlergenicoParaPessoa rdf:type owl:Class ;
+                              owl:equivalentClass [ owl:intersectionOf ( :Alimento
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :possuiSequencia ;
+                                                                           owl:someValuesFrom [ owl:intersectionOf ( :SequenciaAminoacidos
+                                                                                                                     [ rdf:type owl:Restriction ;
+                                                                                                                       owl:onProperty :geraReacaoEmPessoaComProblema ;
+                                                                                                                       owl:someValuesFrom :PessoaComProblema
+                                                                                                                     ]
+                                                                                                                   ) ;
+                                                                                                rdf:type owl:Class
+                                                                                              ]
+                                                                         ]
+                                                                       ) ;
+                                                    rdf:type owl:Class
+                                                  ] .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#AlimentoNaoAlergenico
+:AlimentoNaoAlergenico rdf:type owl:Class ;
+                       owl:equivalentClass [ owl:intersectionOf ( :Alimento
+                                                                  [ rdf:type owl:Class ;
+                                                                    owl:complementOf :AlimentoAlergenico
+                                                                  ]
+                                                                ) ;
+                                             rdf:type owl:Class
+                                           ] .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#Diagnostico
+:Diagnostico rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#DiagnosticoPossuiProblema
+:DiagnosticoPossuiProblema rdf:type owl:Class ;
+                           owl:equivalentClass [ owl:intersectionOf ( :Diagnostico
+                                                                      [ rdf:type owl:Restriction ;
+                                                                        owl:onProperty :indica ;
+                                                                        owl:someValuesFrom :ProblemaEmQuebrarSubstancias
+                                                                      ]
+                                                                    ) ;
+                                                 rdf:type owl:Class
+                                               ] .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#Pessoa
+:Pessoa rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#PessoaComProblema
+:PessoaComProblema rdf:type owl:Class ;
+                   owl:equivalentClass [ owl:intersectionOf ( :Pessoa
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :temDiagnostico ;
+                                                                owl:someValuesFrom :DiagnosticoPossuiProblema
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#ProblemaEmQuebrarSubstancias
+:ProblemaEmQuebrarSubstancias rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#ProfissionalDeSaude
+:ProfissionalDeSaude rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#Reacao
+:Reacao rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#SequenciaAminoacidos
+:SequenciaAminoacidos rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/ontologia-alergias#amendoim
+:amendoim rdf:type owl:NamedIndividual ,
+                   :Alimento ;
+          :possuiSequencia :seqAmendoim .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#ana
+:ana rdf:type owl:NamedIndividual ,
+              :Pessoa ;
+     :temDiagnostico :diagAna ;
+     rdfs:label "Ana Lima" .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#diagAna
+:diagAna rdf:type owl:NamedIndividual ,
+                  :DiagnosticoPossuiProblema ;
+         :indica :problemaLactose .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#diagJoao
+:diagJoao rdf:type owl:NamedIndividual ,
+                   :DiagnosticoPossuiProblema ;
+          :indica :problemaQuebrarProteinas .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#joao
+:joao rdf:type owl:NamedIndividual ,
+               :Pessoa ;
+      :temDiagnostico :diagJoao ;
+      rdfs:label "João Silva" .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#leite
+:leite rdf:type owl:NamedIndividual ,
+                :Alimento ;
+       :possuiSequencia :seqLeite .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#maria
+:maria rdf:type owl:NamedIndividual ,
+                :Pessoa ;
+       rdfs:label "Maria Oliveira" .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#ovo
+:ovo rdf:type owl:NamedIndividual ,
+              :Alimento ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :possuiSequencia ;
+                owl:maxCardinality "0"^^xsd:nonNegativeInteger
+              ] .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#problemaLactose
+:problemaLactose rdf:type owl:NamedIndividual ,
+                          :ProblemaEmQuebrarSubstancias .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#problemaQuebrarProteinas
+:problemaQuebrarProteinas rdf:type owl:NamedIndividual ,
+                                   :ProblemaEmQuebrarSubstancias .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#seqAmendoim
+:seqAmendoim rdf:type owl:NamedIndividual ,
+                      :SequenciaAminoacidos ;
+             :geraReacaoEmPessoaComProblema :joao .
+
+
+###  http://www.semanticweb.org/ontologia-alergias#seqLeite
+:seqLeite rdf:type owl:NamedIndividual ,
+                   :SequenciaAminoacidos ;
+          :geraReacaoEmPessoaComProblema :ana .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
