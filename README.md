@@ -64,7 +64,7 @@ Para simplificar o modelo e garantir a reutilização, foram aplicados Padrões 
 
 ## 5. Navegando no Repositório
 
-* `ontologia-alergias.ttl`: **Arquivo principal da ontologia** em formato Turtle (OWL2). Este arquivo deve ser aberto no Protégé para exploração e testes.
+* `ontologia-alergia-alimentar.ttl`: **Arquivo principal da ontologia** em formato Turtle (OWL2). Este arquivo deve ser aberto no Protégé para exploração e testes(também tem no formato .owx)
 * `Especificação de Requisitos da Ontologia (ORSD).pdf`: Contém o Documento de Requisitos da Ontologia, com a lista de perguntas que o modelo deve responder.
 * `ontologia-alergia-alimentar.png`: Imagem do diagrama conceitual para fácil visualização.
 * `ontologia-alergia-alimentar.vpp`: Arquivo do projeto do **Visual Paradigm**, para quem deseja editar ou explorar o modelo OntoUML.
