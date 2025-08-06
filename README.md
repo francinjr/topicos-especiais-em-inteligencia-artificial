@@ -64,7 +64,7 @@ Para simplificar o modelo e garantir a reutilização, foram aplicados Padrões 
 
 ## 5. Navegando no Repositório
 
-* `ontologia-alergia-alimentar.ttl`: **Arquivo principal da ontologia** em formato Turtle (OWL2). Este arquivo deve ser aberto no Protégé para exploração e testes(também tem no formato .owx)
+* `ontologia-alergia-alimentar.ttl`: **Arquivo principal da ontologia** em formato Turtle (OWL2). Este arquivo deve ser aberto no Protégé para exploração e testes (também tem no formato .owx).
 * `Especificação de Requisitos da Ontologia (ORSD).pdf`: Contém o Documento de Requisitos da Ontologia, com a lista de perguntas que o modelo deve responder.
 * `ontologia-alergia-alimentar.png`: Imagem do diagrama conceitual para fácil visualização.
 * `ontologia-alergia-alimentar.vpp`: Arquivo do projeto do **Visual Paradigm**, para quem deseja editar ou explorar o modelo OntoUML.
@@ -76,10 +76,166 @@ Para simplificar o modelo e garantir a reutilização, foram aplicados Padrões 
 3.  Inicie um reasoner: vá ao menu `Reasoner` e clique em `Start reasoner` (recomenda-se HermiT ou Pellet).
 4.  Navegue pelas classes e indivíduos na aba `Entities` para ver as novas classificações e relações inferidas (geralmente destacadas em amarelo).
 
-## 7. Autores e Contato
+## 7. Consultas SPARQL
 
-* **Francinaldo Manoel** - *Modelagem Conceitual e Implementação OWL*
+### CQ-1: A quais alimentos o paciente X tem alergia?
+```sparql
+PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-## 8. Licença
+SELECT ?alimento
+WHERE {
+  {
+    SELECT ?nomePessoa ?alimento WHERE {
+        ?alimento a :Alimento ;
+                  :possuiSequencia ?sequencia .
+        ?sequencia :geraReacaoEmPessoaComProblema ?pessoa .
+        ?pessoa rdfs:label ?nomePessoa .
+    }
+  }
+  FILTER(?nomePessoa = "João Silva")
+}
+```
+
+CQ-2: Quais são as alternativas alimentares seguras, considerando as alergias do paciente X?
+```sparql
+PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?alimento_seguro WHERE {
+    ?alimento_seguro a :Alimento .
+    MINUS { 
+        ?alimento_seguro :possuiSequencia ?sequencia .
+        ?sequencia :geraReacaoEmPessoaComProblema ?pessoa .
+        ?pessoa rdfs:label ?nomePessoa .
+        FILTER(?nomePessoa = "João Silva")
+    }
+}
+```
+
+CQ-3: Quais os diagnósticos do paciente?
+```sparql
+PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?diagnostico ?problema
+WHERE {
+    ?paciente a :Pessoa ;
+              rdfs:label "João Silva" ;
+              :temDiagnostico ?diagnostico .
+    ?diagnostico :indica ?problema .
+}
+```
+
+Consulta Extra: Pegar todos os pacientes
+```sparql
+PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?paciente ?nome
+WHERE {
+    ?paciente a :Pessoa ;
+              rdfs:label ?nome .
+}
+```
+
+Consulta Extra: Pegar todos os alimentos
+```sparql
+PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
+
+SELECT ?alimento
+WHERE {
+    ?alimento a :Alimento .
+}
+```
+## 8. Aplicação Web
+A aplicação web consiste em uma interface gráfica para melhor visualização das instâncias da ontologia e dos dados.
+O Frontend foi construido com Next.js e o Backend foi feito com Java + Spring Boot + Apache Jena para rodar a ontologia, reasoner e para realização das consultas SPARQL.
+
+## 9. Como Rodar a Aplicação Web
+
+### 🔧 Backend (Spring Boot + Apache Jena)
+
+O backend é uma API REST construída em **Spring Boot 3.x** utilizando **Java 17+** e **Apache Jena** para consultas SPARQL sobre a ontologia OWL2.
+
+### Pré-requisitos:
+- **Java 17+** (JDK 17 ou superior)
+- **Maven 3.8+**
+- **Protégé** (opcional, para visualizar a ontologia `.ttl`)
+- Arquivo da ontologia: `ontologia-alergia-alimentar.ttl` no diretório configurado no projeto (ex.: `src/main/resources/ontologia-alergia-alimentar.ttl/` ou caminho absoluto).
+
+### Como Rodar o Backend:
+1. **Clone o projeto:**
+
+2. **Compile e rode a aplicação:**
+    ```bash
+    mvn clean spring-boot:run
+    ```
+
+3. **Acesse a API REST:**
+    - Exemplos de endpoints:
+        - `GET http://localhost:8080/api/foods/non-allergen?patientName=João Silva`
+        - `GET http://localhost:8080/api/patients`
+        - `GET http://localhost:8080/api/patients/João Silva/diagnostics`
+
+---
+
+### 🌐 Frontend (Next.js)
+
+O frontend foi construído com **Next.js (React + Server Side Rendering)**, consumindo as APIs REST do backend.
+
+### Pré-requisitos:
+- **Node.js 18+**
+- **NPM** (ou **Yarn** se preferir)
+
+### Como Rodar o Frontend:
+1. **Navegue até a pasta do frontend:**
+    ```bash
+    cd ../frontend
+    ```
+
+2. **Instale as dependências:**
+    ```bash
+    npm install
+    ```
+
+3. **Rode o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    ```
+
+4. **Acesse no navegador:**
+    ```text
+    http://localhost:3000
+    ```
+
+---
+
+### 🌐 Comunicação entre Frontend e Backend
+- O **frontend (Next.js)** irá fazer chamadas HTTP (REST API) para o **backend Spring Boot**.
+- As consultas SPARQL são encapsuladas em endpoints REST no backend.
+- Exemplos de rotas no frontend:
+    - Página de alimentos não-alergênicos: `/foods/non-allergen?patientName=João Silva`
+    - Página de diagnósticos de um paciente: `/patients/João Silva/diagnostics`
+
+---
+
+### ⚠️ Observações Importantes:
+- Certifique-se de que o **backend esteja rodando em `localhost:8080`** antes de acessar o frontend.
+- Caso o frontend rode em outra porta (ex.: 3000) e precise fazer requisições, configure corretamente o **proxy** ou utilize variáveis de ambiente (`NEXT_PUBLIC_API_URL`).
+- Verifique se o arquivo `.ttl` da ontologia está acessível e no caminho correto configurado no backend.
+
+
+## 10. Autores e Contato
+
+* **Francinaldo Manoel dos Anjos Junior** - *Modelagem Conceitual, Implementação OWL e desenvolvimento da aplicação web*
+
+## 11. Licença
 
 Este projeto está licenciado sob a licença Creative Commons Atribuição 4.0 Internacional (CC-BY 4.0).
+
+
+
+
+
+
