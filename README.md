@@ -97,7 +97,7 @@ WHERE {
 }
 ```
 
-CQ-2: Quais são as alternativas alimentares seguras, considerando as alergias do paciente X?
+### CQ-2: Quais são as alternativas alimentares seguras, considerando as alergias do paciente X?
 ```sparql
 PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -113,7 +113,7 @@ SELECT ?alimento_seguro WHERE {
 }
 ```
 
-CQ-3: Quais os diagnósticos do paciente?
+### CQ-3: Quais os diagnósticos do paciente?
 ```sparql
 PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -127,7 +127,7 @@ WHERE {
 }
 ```
 
-Consulta Extra: Pegar todos os pacientes
+### Consulta Extra: Pegar todos os pacientes
 ```sparql
 PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -139,7 +139,7 @@ WHERE {
 }
 ```
 
-Consulta Extra: Pegar todos os alimentos
+### Consulta Extra: Pegar todos os alimentos
 ```sparql
 PREFIX : <http://www.semanticweb.org/ontologia-alergias#>
 
