@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: ontologia-alergenicos
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rentalbusiness
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  security:
+    jwt:
+      secret: 3c28a876-43c9-4a28-8e28-d543ec7d6644
+      expiration: 3600000
+      issuer: ontologia-alergenicos
